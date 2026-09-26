@@ -18,8 +18,14 @@ RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf
 # Copy semua file project
 COPY . /var/www/html/
 
-# Berikan izin ke folder writable
-RUN chown -R www-data:www-data /var/www/html/writable /var/www/html/public
+# Buat folder writable & subfoldernya jika belum ada, lalu beri permission
+RUN mkdir -p /var/www/html/writable/cache \
+    /var/www/html/writable/logs \
+    /var/www/html/writable/session \
+    /var/www/html/writable/uploads \
+    /var/www/html/public && \
+    chown -R www-data:www-data /var/www/html/writable /var/www/html/public && \
+    chmod -R 775 /var/www/html/writable
 
 EXPOSE 80
 CMD ["apache2-foreground"]
