@@ -1,0 +1,22 @@
+# SiNilai SMK Backend — Apache URL Rewrite Rules & Security
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Pass Authorization Header to PHP under FastCGI/Apache
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Redirect Trailing Slashes If Not A Folder...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} (.+)/$
+    RewriteRule ^ %1 [L,R=301]
+
+    # Send Non-Static Requests To Front Controller (public/index.php)...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [L,QSA]
+</IfModule>
+
+# Fallback in case mod_rewrite is bypassed
+<IfModule mod_dir.c>
+    DirectoryIndex index.php
+</IfModule>

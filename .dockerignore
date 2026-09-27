@@ -1,0 +1,11 @@
+.git
+.env
+.env.*
+!composer.json
+!composer.lock
+writable/logs/*
+writable/cache/*
+writable/session/*
+writable/uploads/*
+*.sqlite
+*.sqlite3

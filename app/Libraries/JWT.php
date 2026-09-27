@@ -10,8 +10,8 @@ class JWT
 {
     private static function getSecretKey(): string
     {
-        // 1. Try getenv / $_ENV
-        $secret = getenv('JWT_SECRET_KEY');
+        // 1. Try getenv / $_ENV for both JWT_SECRET and JWT_SECRET_KEY
+        $secret = getenv('JWT_SECRET') ?: getenv('JWT_SECRET_KEY') ?: ($_ENV['JWT_SECRET'] ?? $_ENV['JWT_SECRET_KEY'] ?? '');
         if (!empty($secret)) {
             return $secret;
         }
@@ -21,7 +21,8 @@ class JWT
         if (file_exists($envFile)) {
             $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
             foreach ($lines as $line) {
-                if (str_starts_with(trim($line), 'JWT_SECRET_KEY')) {
+                $trimmed = trim($line);
+                if (str_starts_with($trimmed, 'JWT_SECRET=') || str_starts_with($trimmed, 'JWT_SECRET_KEY=')) {
                     $parts = explode('=', $line, 2);
                     if (count($parts) === 2) {
                         return trim(trim($parts[1]), "'\"");
